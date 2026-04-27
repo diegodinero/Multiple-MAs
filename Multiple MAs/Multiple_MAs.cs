@@ -2,7 +2,6 @@
 
 using System.Drawing;
 using TradingPlatform.BusinessLayer;
-using TradingPlatform.BusinessLayer.Utils;
 
 namespace Multiple_MAs
 {
@@ -51,15 +50,6 @@ namespace Multiple_MAs
         })]
         public PriceType Ma1Source = PriceType.Close;
 
-        [InputParameter("MA 1 – Line", 4)]
-        public LineOptions Ma1LineOptions = new LineOptions()
-        {
-            Color     = Color.DodgerBlue,
-            LineStyle = LineStyle.Solid,
-            Width     = 2,
-            WithCheckBox = false
-        };
-
         #endregion
 
         #region Input parameters – MA 2
@@ -90,15 +80,6 @@ namespace Multiple_MAs
             "Weighted", PriceType.Weighted
         })]
         public PriceType Ma2Source = PriceType.Close;
-
-        [InputParameter("MA 2 – Line", 9)]
-        public LineOptions Ma2LineOptions = new LineOptions()
-        {
-            Color     = Color.Orange,
-            LineStyle = LineStyle.Solid,
-            Width     = 2,
-            WithCheckBox = false
-        };
 
         #endregion
 
@@ -131,15 +112,6 @@ namespace Multiple_MAs
         })]
         public PriceType Ma3Source = PriceType.Close;
 
-        [InputParameter("MA 3 – Line", 14)]
-        public LineOptions Ma3LineOptions = new LineOptions()
-        {
-            Color     = Color.LimeGreen,
-            LineStyle = LineStyle.Solid,
-            Width     = 2,
-            WithCheckBox = false
-        };
-
         #endregion
 
         #region Input parameters – MA 4
@@ -171,15 +143,6 @@ namespace Multiple_MAs
         })]
         public PriceType Ma4Source = PriceType.Close;
 
-        [InputParameter("MA 4 – Line", 19)]
-        public LineOptions Ma4LineOptions = new LineOptions()
-        {
-            Color     = Color.Red,
-            LineStyle = LineStyle.Solid,
-            Width     = 2,
-            WithCheckBox = false
-        };
-
         #endregion
 
         // Inner built-in MA indicator instances – one per line.
@@ -210,12 +173,6 @@ namespace Multiple_MAs
         protected override void OnInit()
         {
             ShortName = "Multiple MAs";
-
-            // Apply line appearance options chosen by the user.
-            ApplyLineOptions(0, Ma1LineOptions);
-            ApplyLineOptions(1, Ma2LineOptions);
-            ApplyLineOptions(2, Ma3LineOptions);
-            ApplyLineOptions(3, Ma4LineOptions);
 
             // Dispose previous sub-indicators (handles parameter-change re-init).
             DisposeSubIndicators();
@@ -287,17 +244,6 @@ namespace Multiple_MAs
             ma3 = null;
             ma4?.Dispose();
             ma4 = null;
-        }
-
-        /// <summary>
-        /// Applies color, line style, and width from a <see cref="LineOptions"/> to the given line series.
-        /// <paramref name="lineIndex"/> must be a valid index into <see cref="LinesSeries"/> (0–3).
-        /// </summary>
-        private void ApplyLineOptions(int lineIndex, LineOptions options)
-        {
-            LinesSeries[lineIndex].Color = options.Color;
-            LinesSeries[lineIndex].Style = options.LineStyle;
-            LinesSeries[lineIndex].Width = options.Width;
         }
     }
 }
