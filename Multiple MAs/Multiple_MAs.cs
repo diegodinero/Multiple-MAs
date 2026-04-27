@@ -52,7 +52,7 @@ namespace Multiple_MAs
         public PriceType Ma1Source = PriceType.Close;
 
         [InputParameter("MA 1 – Line", 4)]
-        public LineOptions Ma1Line = new LineOptions(Color.DodgerBlue, 2, LineStyle.Solid);
+        public LineOptions Ma1Line = new LineOptions() { Color = Color.DodgerBlue, Width = 2, LineStyle = LineStyle.Solid };
 
         #endregion
 
@@ -86,7 +86,7 @@ namespace Multiple_MAs
         public PriceType Ma2Source = PriceType.Close;
 
         [InputParameter("MA 2 – Line", 9)]
-        public LineOptions Ma2Line = new LineOptions(Color.Orange, 2, LineStyle.Solid);
+        public LineOptions Ma2Line = new LineOptions() { Color = Color.Orange, Width = 2, LineStyle = LineStyle.Solid };
 
         #endregion
 
@@ -120,7 +120,7 @@ namespace Multiple_MAs
         public PriceType Ma3Source = PriceType.Close;
 
         [InputParameter("MA 3 – Line", 14)]
-        public LineOptions Ma3Line = new LineOptions(Color.LimeGreen, 2, LineStyle.Solid);
+        public LineOptions Ma3Line = new LineOptions() { Color = Color.LimeGreen, Width = 2, LineStyle = LineStyle.Solid };
 
         #endregion
 
@@ -154,7 +154,7 @@ namespace Multiple_MAs
         public PriceType Ma4Source = PriceType.Close;
 
         [InputParameter("MA 4 – Line", 19)]
-        public LineOptions Ma4Line = new LineOptions(Color.Red, 2, LineStyle.Solid);
+        public LineOptions Ma4Line = new LineOptions() { Color = Color.Red, Width = 2, LineStyle = LineStyle.Solid };
 
         #endregion
 
@@ -234,7 +234,7 @@ namespace Multiple_MAs
         {
             line.Color = opts.Color;
             line.Width = opts.Width;
-            line.Style = opts.Style;
+            line.Style = opts.LineStyle;
         }
 
         /// <summary>Returns a Quantower built-in MA indicator for the requested type.</summary>
