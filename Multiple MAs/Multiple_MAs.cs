@@ -51,9 +51,6 @@ namespace Multiple_MAs
         })]
         public PriceType Ma1Source = PriceType.Close;
 
-        [InputParameter("MA 1 – Line", 4)]
-        public LineOptions Ma1Line = new LineOptions() { Color = Color.DodgerBlue, Width = 2, LineStyle = LineStyle.Solid };
-
         #endregion
 
         #region Input parameters – MA 2
@@ -84,9 +81,6 @@ namespace Multiple_MAs
             "Weighted", PriceType.Weighted
         })]
         public PriceType Ma2Source = PriceType.Close;
-
-        [InputParameter("MA 2 – Line", 9)]
-        public LineOptions Ma2Line = new LineOptions() { Color = Color.Orange, Width = 2, LineStyle = LineStyle.Solid };
 
         #endregion
 
@@ -119,9 +113,6 @@ namespace Multiple_MAs
         })]
         public PriceType Ma3Source = PriceType.Close;
 
-        [InputParameter("MA 3 – Line", 14)]
-        public LineOptions Ma3Line = new LineOptions() { Color = Color.LimeGreen, Width = 2, LineStyle = LineStyle.Solid };
-
         #endregion
 
         #region Input parameters – MA 4
@@ -152,9 +143,6 @@ namespace Multiple_MAs
             "Weighted", PriceType.Weighted
         })]
         public PriceType Ma4Source = PriceType.Close;
-
-        [InputParameter("MA 4 – Line", 19)]
-        public LineOptions Ma4Line = new LineOptions() { Color = Color.Red, Width = 2, LineStyle = LineStyle.Solid };
 
         #endregion
 
@@ -200,12 +188,6 @@ namespace Multiple_MAs
             AddIndicator(ma2);
             AddIndicator(ma3);
             AddIndicator(ma4);
-
-            // Apply line appearance from input parameters.
-            ApplyLineOptions(LinesSeries[0], Ma1Line);
-            ApplyLineOptions(LinesSeries[1], Ma2Line);
-            ApplyLineOptions(LinesSeries[2], Ma3Line);
-            ApplyLineOptions(LinesSeries[3], Ma4Line);
         }
 
         /// <summary>
@@ -228,14 +210,6 @@ namespace Multiple_MAs
         }
 
         // ── Helpers ────────────────────────────────────────────────────────────
-
-        /// <summary>Applies a LineOptions value to a LineSeries.</summary>
-        private static void ApplyLineOptions(LineSeries line, LineOptions opts)
-        {
-            line.Color = opts.Color;
-            line.Width = opts.Width;
-            line.Style = opts.LineStyle;
-        }
 
         /// <summary>Returns a Quantower built-in MA indicator for the requested type.</summary>
         private Indicator CreateBuiltInMA(int type, int period, PriceType source)
