@@ -50,17 +50,26 @@ namespace Multiple_MAs
         })]
         public PriceType Ma1Source = PriceType.Close;
 
+        [InputParameter("MA 1 – Line", 4)]
+        public LineOptions Ma1LineOptions = new LineOptions()
+        {
+            Color     = Color.DodgerBlue,
+            LineStyle = LineStyle.Solid,
+            Width     = 2,
+            WithCheckBox = false
+        };
+
         #endregion
 
         #region Input parameters – MA 2
 
-        [InputParameter("MA 2 – Show", 4)]
+        [InputParameter("MA 2 – Show", 5)]
         public bool Ma2Show = true;
 
-        [InputParameter("MA 2 – Period", 5, 1, 999, 1, 0)]
+        [InputParameter("MA 2 – Period", 6, 1, 999, 1, 0)]
         public int Ma2Period = 20;
 
-        [InputParameter("MA 2 – Type", 6, variants: new object[]
+        [InputParameter("MA 2 – Type", 7, variants: new object[]
         {
             "SMA",  TYPE_SMA,
             "EMA",  TYPE_EMA,
@@ -69,7 +78,7 @@ namespace Multiple_MAs
         })]
         public int Ma2Type = TYPE_EMA;
 
-        [InputParameter("MA 2 – Source", 7, variants: new object[]
+        [InputParameter("MA 2 – Source", 8, variants: new object[]
         {
             "Close",    PriceType.Close,
             "Open",     PriceType.Open,
@@ -81,17 +90,26 @@ namespace Multiple_MAs
         })]
         public PriceType Ma2Source = PriceType.Close;
 
+        [InputParameter("MA 2 – Line", 9)]
+        public LineOptions Ma2LineOptions = new LineOptions()
+        {
+            Color     = Color.Orange,
+            LineStyle = LineStyle.Solid,
+            Width     = 2,
+            WithCheckBox = false
+        };
+
         #endregion
 
         #region Input parameters – MA 3
 
-        [InputParameter("MA 3 – Show", 8)]
+        [InputParameter("MA 3 – Show", 10)]
         public bool Ma3Show = true;
 
-        [InputParameter("MA 3 – Period", 9, 1, 999, 1, 0)]
+        [InputParameter("MA 3 – Period", 11, 1, 999, 1, 0)]
         public int Ma3Period = 50;
 
-        [InputParameter("MA 3 – Type", 10, variants: new object[]
+        [InputParameter("MA 3 – Type", 12, variants: new object[]
         {
             "SMA",  TYPE_SMA,
             "EMA",  TYPE_EMA,
@@ -100,7 +118,7 @@ namespace Multiple_MAs
         })]
         public int Ma3Type = TYPE_EMA;
 
-        [InputParameter("MA 3 – Source", 11, variants: new object[]
+        [InputParameter("MA 3 – Source", 13, variants: new object[]
         {
             "Close",    PriceType.Close,
             "Open",     PriceType.Open,
@@ -112,17 +130,26 @@ namespace Multiple_MAs
         })]
         public PriceType Ma3Source = PriceType.Close;
 
+        [InputParameter("MA 3 – Line", 14)]
+        public LineOptions Ma3LineOptions = new LineOptions()
+        {
+            Color     = Color.LimeGreen,
+            LineStyle = LineStyle.Solid,
+            Width     = 2,
+            WithCheckBox = false
+        };
+
         #endregion
 
         #region Input parameters – MA 4
 
-        [InputParameter("MA 4 – Show", 12)]
+        [InputParameter("MA 4 – Show", 15)]
         public bool Ma4Show = true;
 
-        [InputParameter("MA 4 – Period", 13, 1, 999, 1, 0)]
+        [InputParameter("MA 4 – Period", 16, 1, 999, 1, 0)]
         public int Ma4Period = 200;
 
-        [InputParameter("MA 4 – Type", 14, variants: new object[]
+        [InputParameter("MA 4 – Type", 17, variants: new object[]
         {
             "SMA",  TYPE_SMA,
             "EMA",  TYPE_EMA,
@@ -131,7 +158,7 @@ namespace Multiple_MAs
         })]
         public int Ma4Type = TYPE_SMA;
 
-        [InputParameter("MA 4 – Source", 15, variants: new object[]
+        [InputParameter("MA 4 – Source", 18, variants: new object[]
         {
             "Close",    PriceType.Close,
             "Open",     PriceType.Open,
@@ -142,6 +169,15 @@ namespace Multiple_MAs
             "Weighted", PriceType.Weighted
         })]
         public PriceType Ma4Source = PriceType.Close;
+
+        [InputParameter("MA 4 – Line", 19)]
+        public LineOptions Ma4LineOptions = new LineOptions()
+        {
+            Color     = Color.Red,
+            LineStyle = LineStyle.Solid,
+            Width     = 2,
+            WithCheckBox = false
+        };
 
         #endregion
 
@@ -173,6 +209,12 @@ namespace Multiple_MAs
         protected override void OnInit()
         {
             ShortName = "Multiple MAs";
+
+            // Apply line appearance options chosen by the user.
+            ApplyLineOptions(0, Ma1LineOptions);
+            ApplyLineOptions(1, Ma2LineOptions);
+            ApplyLineOptions(2, Ma3LineOptions);
+            ApplyLineOptions(3, Ma4LineOptions);
 
             // Dispose previous sub-indicators (handles parameter-change re-init).
             DisposeSubIndicators();
@@ -244,6 +286,17 @@ namespace Multiple_MAs
             ma3 = null;
             ma4?.Dispose();
             ma4 = null;
+        }
+
+        /// <summary>
+        /// Applies color, line style, and width from a <see cref="LineOptions"/> to the given line series.
+        /// <paramref name="lineIndex"/> must be a valid index into <see cref="LinesSeries"/> (0–3).
+        /// </summary>
+        private void ApplyLineOptions(int lineIndex, LineOptions options)
+        {
+            LinesSeries[lineIndex].Color = options.Color;
+            LinesSeries[lineIndex].Style = options.LineStyle;
+            LinesSeries[lineIndex].Width = options.Width;
         }
     }
 }
