@@ -1,6 +1,5 @@
 // Copyright QUANTOWER LLC. © 2017-2023. All rights reserved.
 
-using System;
 using System.Drawing;
 using TradingPlatform.BusinessLayer;
 
@@ -8,8 +7,10 @@ namespace Multiple_MAs
 {
     /// <summary>
     /// Displays up to 4 fully configurable Moving Averages on the same chart panel.
-    /// Each MA supports independent period, type (SMA/EMA/SMMA/LWMA), source price,
-    /// and show/hide toggle. Line colors are configurable via the Quantower UI.
+    /// Each MA delegates calculation to Quantower's built-in MA indicators so the
+    /// values exactly match what the platform's own SMA/EMA/SMMA/LWMA indicators produce.
+    /// Each MA supports independent period, type, source price, and show/hide toggle.
+    /// Line colors are configurable via the Quantower UI.
     /// </summary>
     public class Multiple_MAs : Indicator
     {
@@ -144,6 +145,9 @@ namespace Multiple_MAs
 
         #endregion
 
+        // Inner built-in MA indicator instances – one per line.
+        private Indicator ma1, ma2, ma3, ma4;
+
         /// <summary>
         /// Indicator's constructor. Contains general information: name, description, LineSeries etc.
         /// </summary>
@@ -164,88 +168,82 @@ namespace Multiple_MAs
 
         /// <summary>
         /// Called after creating the indicator and after any input-parameter change.
+        /// Recreates the four built-in MA sub-indicators with the current settings.
         /// </summary>
         protected override void OnInit()
         {
             ShortName = "Multiple MAs";
+
+            // Dispose previous sub-indicators (handles parameter-change re-init).
+            DisposeSubIndicators();
+
+            // Create and attach a Quantower built-in MA for each line.
+            ma1 = CreateBuiltInMA(Ma1Type, Ma1Period, Ma1Source);
+            ma2 = CreateBuiltInMA(Ma2Type, Ma2Period, Ma2Source);
+            ma3 = CreateBuiltInMA(Ma3Type, Ma3Period, Ma3Source);
+            ma4 = CreateBuiltInMA(Ma4Type, Ma4Period, Ma4Source);
+
+            AddIndicator(ma1);
+            AddIndicator(ma2);
+            AddIndicator(ma3);
+            AddIndicator(ma4);
         }
 
         /// <summary>
-        /// Calculation entry point – called on every price update.
+        /// Calculation entry point – reads values from the built-in sub-indicators.
         /// </summary>
         protected override void OnUpdate(UpdateArgs args)
         {
-            CalculateAndSet(Ma1Show, Ma1Type, Ma1Period, Ma1Source, lineIndex: 0);
-            CalculateAndSet(Ma2Show, Ma2Type, Ma2Period, Ma2Source, lineIndex: 1);
-            CalculateAndSet(Ma3Show, Ma3Type, Ma3Period, Ma3Source, lineIndex: 2);
-            CalculateAndSet(Ma4Show, Ma4Type, Ma4Period, Ma4Source, lineIndex: 3);
+            SetLineValue(Ma1Show, ma1, lineIndex: 0);
+            SetLineValue(Ma2Show, ma2, lineIndex: 1);
+            SetLineValue(Ma3Show, ma3, lineIndex: 2);
+            SetLineValue(Ma4Show, ma4, lineIndex: 3);
+        }
+
+        /// <summary>
+        /// Called when the indicator is removed or the chart is reset.
+        /// </summary>
+        protected override void OnClear()
+        {
+            DisposeSubIndicators();
         }
 
         // ── Helpers ────────────────────────────────────────────────────────────
 
-        private void CalculateAndSet(bool show, int type, int period, PriceType source, int lineIndex)
+        /// <summary>Returns a Quantower built-in MA indicator for the requested type.</summary>
+        private Indicator CreateBuiltInMA(int type, int period, PriceType source)
         {
-            if (!show || Count < period)
+            return type switch
+            {
+                TYPE_EMA  => Core.Instance.Indicators.BuiltIn.EMA(period, source),
+                TYPE_SMMA => Core.Instance.Indicators.BuiltIn.SMMA(period, source),
+                TYPE_LWMA => Core.Instance.Indicators.BuiltIn.LWMA(period, source),
+                _         => Core.Instance.Indicators.BuiltIn.SMA(period, source),
+            };
+        }
+
+        /// <summary>Reads the current value from a sub-indicator and writes it to the given line.</summary>
+        private void SetLineValue(bool show, Indicator ma, int lineIndex)
+        {
+            if (!show || ma == null)
                 return;
 
-            double value = type switch
-            {
-                TYPE_EMA  => CalculateEMA(lineIndex, period, source),
-                TYPE_SMMA => CalculateSMMA(lineIndex, period, source),
-                TYPE_LWMA => CalculateLWMA(period, source),
-                _         => CalculateSMA(period, source),   // TYPE_SMA (default)
-            };
-
+            double value = ma.GetValue();
             if (!double.IsNaN(value))
                 SetValue(value, lineIndex);
         }
 
-        /// <summary>Simple Moving Average – arithmetic mean of the last <paramref name="period"/> bars.</summary>
-        private double CalculateSMA(int period, PriceType source)
+        /// <summary>Disposes all four sub-indicators and nulls the references.</summary>
+        private void DisposeSubIndicators()
         {
-            double sum = 0.0;
-            for (int i = 0; i < period; i++)
-                sum += GetPrice(source, i);
-            return sum / period;
-        }
-
-        /// <summary>Exponential Moving Average – uses smoothing factor k = 2/(period+1).</summary>
-        private double CalculateEMA(int lineIndex, int period, PriceType source)
-        {
-            double k       = 2.0 / (period + 1);
-            double prevEMA = double.IsNaN(GetValue(lineIndex, 1))
-                ? GetPrice(source)
-                : GetValue(lineIndex, 1);
-            return prevEMA + k * (GetPrice(source) - prevEMA);
-        }
-
-        /// <summary>Smoothed Moving Average – each bar is given equal weighting over time.</summary>
-        private double CalculateSMMA(int lineIndex, int period, PriceType source)
-        {
-            double prevSMMA = GetValue(lineIndex, 1);
-            if (double.IsNaN(prevSMMA))
-            {
-                // Seed with SMA on the first valid bar.
-                double sum = 0.0;
-                for (int i = 0; i < period; i++)
-                    sum += GetPrice(source, i);
-                return sum / period;
-            }
-            return (prevSMMA * (period - 1) + GetPrice(source)) / period;
-        }
-
-        /// <summary>Linear Weighted Moving Average – most recent bar receives the highest weight.</summary>
-        private double CalculateLWMA(int period, PriceType source)
-        {
-            double weightedSum = 0.0;
-            double weightSum   = 0.0;
-            for (int i = 0; i < period; i++)
-            {
-                double weight = period - i;   // weight: period, period-1, …, 1
-                weightedSum += GetPrice(source, i) * weight;
-                weightSum   += weight;
-            }
-            return weightedSum / weightSum;
+            ma1?.Dispose();
+            ma1 = null;
+            ma2?.Dispose();
+            ma2 = null;
+            ma3?.Dispose();
+            ma3 = null;
+            ma4?.Dispose();
+            ma4 = null;
         }
     }
 }
