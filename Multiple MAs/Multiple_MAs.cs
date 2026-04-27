@@ -51,8 +51,13 @@ namespace Multiple_MAs
         })]
         public PriceType Ma1Source = PriceType.Close;
 
+        private LineOptions _ma1Line = new LineOptions() { Color = Color.DodgerBlue, Width = 2, LineStyle = LineStyle.Solid };
         [InputParameter("MA 1 – Line", 4)]
-        public LineOptions Ma1Line = new LineOptions() { Color = Color.DodgerBlue, Width = 2, LineStyle = LineStyle.Solid };
+        public LineOptions Ma1Line
+        {
+            get => _ma1Line;
+            set { _ma1Line = value; if (LinesSeries.Length > 0) ApplyLineOptions(LinesSeries[0], value); }
+        }
 
         #endregion
 
@@ -85,8 +90,13 @@ namespace Multiple_MAs
         })]
         public PriceType Ma2Source = PriceType.Close;
 
+        private LineOptions _ma2Line = new LineOptions() { Color = Color.Orange, Width = 2, LineStyle = LineStyle.Solid };
         [InputParameter("MA 2 – Line", 9)]
-        public LineOptions Ma2Line = new LineOptions() { Color = Color.Orange, Width = 2, LineStyle = LineStyle.Solid };
+        public LineOptions Ma2Line
+        {
+            get => _ma2Line;
+            set { _ma2Line = value; if (LinesSeries.Length > 1) ApplyLineOptions(LinesSeries[1], value); }
+        }
 
         #endregion
 
@@ -119,8 +129,13 @@ namespace Multiple_MAs
         })]
         public PriceType Ma3Source = PriceType.Close;
 
+        private LineOptions _ma3Line = new LineOptions() { Color = Color.LimeGreen, Width = 2, LineStyle = LineStyle.Solid };
         [InputParameter("MA 3 – Line", 14)]
-        public LineOptions Ma3Line = new LineOptions() { Color = Color.LimeGreen, Width = 2, LineStyle = LineStyle.Solid };
+        public LineOptions Ma3Line
+        {
+            get => _ma3Line;
+            set { _ma3Line = value; if (LinesSeries.Length > 2) ApplyLineOptions(LinesSeries[2], value); }
+        }
 
         #endregion
 
@@ -153,8 +168,13 @@ namespace Multiple_MAs
         })]
         public PriceType Ma4Source = PriceType.Close;
 
+        private LineOptions _ma4Line = new LineOptions() { Color = Color.Red, Width = 2, LineStyle = LineStyle.Solid };
         [InputParameter("MA 4 – Line", 19)]
-        public LineOptions Ma4Line = new LineOptions() { Color = Color.Red, Width = 2, LineStyle = LineStyle.Solid };
+        public LineOptions Ma4Line
+        {
+            get => _ma4Line;
+            set { _ma4Line = value; if (LinesSeries.Length > 3) ApplyLineOptions(LinesSeries[3], value); }
+        }
 
         #endregion
 
