@@ -56,7 +56,7 @@ namespace Multiple_MAs
         public LineOptions Ma1Line
         {
             get => _ma1Line;
-            set { _ma1Line = value; if (LinesSeries.Count > 0) ApplyLineOptions(LinesSeries[0], value); }
+            set { _ma1Line = value; if (LinesSeries.Length > 0) ApplyLineOptions(LinesSeries[0], value); }
         }
 
         #endregion
@@ -95,7 +95,7 @@ namespace Multiple_MAs
         public LineOptions Ma2Line
         {
             get => _ma2Line;
-            set { _ma2Line = value; if (LinesSeries.Count > 1) ApplyLineOptions(LinesSeries[1], value); }
+            set { _ma2Line = value; if (LinesSeries.Length > 1) ApplyLineOptions(LinesSeries[1], value); }
         }
 
         #endregion
@@ -134,7 +134,7 @@ namespace Multiple_MAs
         public LineOptions Ma3Line
         {
             get => _ma3Line;
-            set { _ma3Line = value; if (LinesSeries.Count > 2) ApplyLineOptions(LinesSeries[2], value); }
+            set { _ma3Line = value; if (LinesSeries.Length > 2) ApplyLineOptions(LinesSeries[2], value); }
         }
 
         #endregion
@@ -173,7 +173,7 @@ namespace Multiple_MAs
         public LineOptions Ma4Line
         {
             get => _ma4Line;
-            set { _ma4Line = value; if (LinesSeries.Count > 3) ApplyLineOptions(LinesSeries[3], value); }
+            set { _ma4Line = value; if (LinesSeries.Length > 3) ApplyLineOptions(LinesSeries[3], value); }
         }
 
         #endregion
