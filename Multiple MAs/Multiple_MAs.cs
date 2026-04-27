@@ -2,6 +2,7 @@
 
 using System.Drawing;
 using TradingPlatform.BusinessLayer;
+using TradingPlatform.BusinessLayer.Utils;
 
 namespace Multiple_MAs
 {
